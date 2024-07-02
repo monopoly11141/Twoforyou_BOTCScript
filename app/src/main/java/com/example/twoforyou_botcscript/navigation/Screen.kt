@@ -7,7 +7,10 @@ sealed class Screen() {
     object DisplayScriptScreen
 
     @Serializable
-    data class ScriptInfoScreen(
+    data class ScriptDetailScreen(
         val scriptId: Int = -1
     )
+
+    @Serializable
+    object CharacterListScreen
 }

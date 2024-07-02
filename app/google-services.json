@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "303012781659",
+    "project_id": "botcscriptbuilder-4460b",
+    "storage_bucket": "botcscriptbuilder-4460b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:303012781659:android:bd715e840576cbe1cfe97e",
+        "android_client_info": {
+          "package_name": "com.example.twoforyou_botcscript"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvFq12I1sfr5kz7YWx-XO1Y0GWNTwh6ro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

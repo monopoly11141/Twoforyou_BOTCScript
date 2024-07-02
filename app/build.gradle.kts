@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.googleServices)
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
 }
@@ -62,6 +63,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.database.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -87,4 +89,7 @@ dependencies {
     implementation( libs.androidx.room.runtime)
     annotationProcessor (libs.androidx.room.room.compiler)
     kapt (libs.androidx.room.room.compiler)
+    //firebase
+    implementation(libs.firebase.bom)
+    implementation(libs.google.firebase.database.ktx)
 }
