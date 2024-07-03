@@ -13,7 +13,8 @@ import androidx.compose.ui.Alignment
 
 @Composable
 fun CheckboxMinimalExample(
-    isChecked : () -> Unit
+    onChecked : () -> Unit,
+    onUnChecked : () -> Unit
 ) {
     var checked by remember { mutableStateOf(false) }
 
@@ -27,12 +28,9 @@ fun CheckboxMinimalExample(
             checked = checked,
             onCheckedChange = {
                 checked = it
+                if(checked) onChecked() else onUnChecked()
             }
         )
     }
 
-    if(checked) {
-        isChecked()
-        Log.d("TAG", "Checkbox : goes in")
-    }
 }

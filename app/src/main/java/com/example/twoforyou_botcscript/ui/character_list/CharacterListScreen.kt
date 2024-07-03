@@ -7,14 +7,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.twoforyou_botcscript.data.model.helper.Character_Type
 import com.example.twoforyou_botcscript.ui.character_list.composable.CheckboxMinimalExample
 
 @Composable
@@ -24,21 +20,19 @@ fun CharacterListScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    var displayingCharacterList by remember { mutableStateOf(state.allCharactersList) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        CheckboxMinimalExample {
-            displayingCharacterList =
-                displayingCharacterList.filter { it.characterType == Character_Type.악마_DEMON }
-        }
+        CheckboxMinimalExample(
+            { viewModel.updateFilteredCharactersList() },
+            { viewModel.updateFilteredCharactersListToAllCharacters() }
+        )
 
         LazyColumn(
             modifier = Modifier,
         ) {
-            items(state.allCharactersList) {
+            items(state.filteredCharactersList) {
                 Text(it.name)
             }
         }
