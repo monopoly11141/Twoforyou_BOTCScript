@@ -3,7 +3,6 @@ package com.example.twoforyou_botcscript.ui.character_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.twoforyou_botcscript.data.model.helper.Character_Type
-import com.example.twoforyou_botcscript.data.model.helper.Script_List
 import com.example.twoforyou_botcscript.domain.repository.character_list.CharacterListRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,41 +24,29 @@ class CharacterListViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update {
                 it.copy(
-                    allCharactersList = repository.getAllCharacters().stateIn(viewModelScope).value,
+                    allCharactersList = repository.getAllCharacters()
+                        .stateIn(viewModelScope).value.toSet(),
                     //filteredCharactersList = repository.getAllCharacters().stateIn(viewModelScope).value
                 )
             }
         }
     }
 
-    fun updateFilteredCharactersList() {
+    fun insertFilteredCharactersListByCharacterType(characterType: Character_Type) {
         _state.update {
             it.copy(
-                filteredCharactersList = it.allCharactersList.filter {it.characterType == Character_Type.악마_DEMON}
+                filteredCharactersList = (it.filteredCharactersList + it.allCharactersList.filter { it.characterType == characterType }).sortedBy {
+                    it.characterType
+                }.toSet()
             )
         }
     }
 
-    fun updateFilteredCharactersListByCharacterType(characterType: Character_Type) {
+    fun deleteFilteredCharactersListByCharacterType(characterType: Character_Type) {
         _state.update {
             it.copy(
-                filteredCharactersList = it.allCharactersList.filter {it.characterType == characterType}
-            )
-        }
-    }
-
-    fun insertFilteredCharactersListByScript(scriptList: Script_List) {
-        _state.update {
-            it.copy(
-                filteredCharactersList = it.filteredCharactersList + it.allCharactersList.filter { it.scriptList == scriptList }
-            )
-        }
-    }
-
-    fun deleteFilterCharactersListByScript(scriptList: Script_List) {
-        _state.update {
-            it.copy(
-                filteredCharactersList = it.filteredCharactersList.filter {it.scriptList !== scriptList }
+                filteredCharactersList = it.filteredCharactersList.filter { it.characterType !== characterType }
+                    .toSet()
             )
         }
     }

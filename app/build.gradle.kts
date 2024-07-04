@@ -92,4 +92,6 @@ dependencies {
     //firebase
     implementation(libs.firebase.bom)
     implementation(libs.google.firebase.database.ktx)
+    //coil
+    implementation(libs.coil.compose)
 }

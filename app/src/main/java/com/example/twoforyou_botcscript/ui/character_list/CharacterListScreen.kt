@@ -16,8 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.twoforyou_botcscript.data.model.Character
+import com.example.twoforyou_botcscript.data.model.helper.Character_Type
 import com.example.twoforyou_botcscript.data.model.helper.Script_List
 import com.example.twoforyou_botcscript.ui.character_list.composable.ScriptFilterCheckList
+import com.example.twoforyou_botcscript.ui.composable.CharacterItem
 
 @Composable
 fun CharacterListScreen(
@@ -26,7 +29,8 @@ fun CharacterListScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val checked = remember { Script_List.entries.map { false }.toMutableStateList() }
+    val checkedScript = remember { Script_List.entries.map { false }.toMutableStateList() }
+    val checkedCharacterType = remember { Script_List.entries.map { false }.toMutableStateList() }
 
     Column(
         modifier = Modifier
@@ -36,28 +40,32 @@ fun CharacterListScreen(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            itemsIndexed(Script_List.entries) { i, scriptName ->
+            itemsIndexed(Character_Type.entries) { i, characterType ->
                 ScriptFilterCheckList(
-                    checked[i],
+                    checkedCharacterType[i],
                     {
-                        checked[i] = !checked[i]
-                        if (checked[i]) {
-                            viewModel.insertFilteredCharactersListByScript(scriptName)
+                        checkedCharacterType[i] = !checkedCharacterType[i]
+                        if (checkedCharacterType[i]) {
+                            viewModel.insertFilteredCharactersListByCharacterType(characterType)
                         } else {
-                            viewModel.deleteFilterCharactersListByScript(scriptName)
+                            viewModel.deleteFilteredCharactersListByCharacterType(characterType)
                         }
                     },
-                    scriptName.name
+                    characterType.name
                 )
             }
         }
 
-
         LazyColumn(
             modifier = Modifier,
         ) {
-            items(state.filteredCharactersList) {
-                Text(it.name)
+            items(state.filteredCharactersList.toList()) { character ->
+
+                CharacterItem(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    character
+                )
             }
         }
     }
