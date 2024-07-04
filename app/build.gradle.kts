@@ -94,4 +94,6 @@ dependencies {
     implementation(libs.google.firebase.database.ktx)
     //coil
     implementation(libs.coil.compose)
+    //gson
+    implementation(libs.gson)
 }

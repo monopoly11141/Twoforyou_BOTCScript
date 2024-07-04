@@ -21,19 +21,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Twoforyou_BOTCScriptTheme {
-                Scaffold(
-                    content = { innerPadding ->
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding)
-                        ) {
-                            val navController = rememberNavController()
-                            Navigation(navController)
-                        }
-
-                    }
-                )
+                val navController = rememberNavController()
+                Navigation(navController)
 
             }
         }

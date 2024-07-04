@@ -1,5 +1,9 @@
 package com.example.twoforyou_botcscript.di
 
+import android.content.Context
+import androidx.room.Room
+import com.example.twoforyou_botcscript.data.db.local.ScriptDao
+import com.example.twoforyou_botcscript.data.db.local.ScriptDb
 import com.example.twoforyou_botcscript.data.db.remote.FirebaseCharacterDatabase
 import com.example.twoforyou_botcscript.data.repository.character_list.CharacterListRepositoryImpl
 import com.example.twoforyou_botcscript.data.repository.display_script.DisplayScriptRepositoryImpl
@@ -10,6 +14,7 @@ import com.example.twoforyou_botcscript.domain.repository.script_info.ScriptInfo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -28,9 +33,10 @@ class AppModule {
     @Provides
     @Singleton
     fun providesScriptDisplayRepository(
+        scriptDao : ScriptDao,
         firebaseCharacterDatabase: FirebaseCharacterDatabase
     ): DisplayScriptRepository {
-        return DisplayScriptRepositoryImpl(firebaseCharacterDatabase)
+        return DisplayScriptRepositoryImpl(scriptDao, firebaseCharacterDatabase)
     }
 
     @Provides
@@ -44,4 +50,14 @@ class AppModule {
     fun providesFirebaseCharacterDatabase(): FirebaseCharacterDatabase {
         return FirebaseCharacterDatabase()
     }
+
+    @Provides
+    fun providesScriptDao(scriptDb: ScriptDb): ScriptDao = scriptDb.scriptDao
+
+    @Provides
+    @Singleton
+    fun providesScriptDb(@ApplicationContext context: Context): ScriptDb =
+        Room.databaseBuilder(context, ScriptDb::class.java, "script_database")
+            .fallbackToDestructiveMigration()
+            .build()
 }

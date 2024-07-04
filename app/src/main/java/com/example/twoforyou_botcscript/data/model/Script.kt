@@ -11,8 +11,7 @@ data class Script(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     @Embedded
-    val scriptGeneralInfo: Script_General_Info? = null,
-    val charactersList: MutableList<String> = mutableListOf(),
+    val scriptGeneralInfo: Script_General_Info = Script_General_Info(),
     val charactersObjectList: MutableList<Character> = mutableListOf(),
    // val fabledCharacterList: MutableList<FabledCharacter> = mutableListOf()
 )

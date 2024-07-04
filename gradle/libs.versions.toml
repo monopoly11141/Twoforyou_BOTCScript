@@ -18,6 +18,8 @@ roomKtx = "2.6.1"
 googleServces = "4.4.1"
 firebaseDatabaseKtx = "21.0.0"
 coil = "2.6.0"
+gson = "2.10.1"
+material3Android = "1.2.1"
 
 
 [libraries]
@@ -52,6 +54,7 @@ androidx-room-room-compiler = { module = "androidx.room:room-compiler", version.
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomKtx" }
 firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
