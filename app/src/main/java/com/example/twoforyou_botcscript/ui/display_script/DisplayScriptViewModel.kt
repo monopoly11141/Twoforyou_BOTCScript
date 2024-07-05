@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.twoforyou_botcscript.data.model.Character
 import com.example.twoforyou_botcscript.data.model.Script
+import com.example.twoforyou_botcscript.data.model.helper.Script_General_Info
 import com.example.twoforyou_botcscript.domain.repository.display_script.DisplayScriptRepository
 import com.example.twoforyou_botcscript.util.getEnglish
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,13 +49,19 @@ class DisplayScriptViewModel @Inject constructor(
         }
     }
 
-    fun generateScriptFromJsonString(jsonString: String): Script {
-        val script = Script()
-        _state.value.allCharactersList.forEach { character ->
+    fun generateScriptFromJsonString(
+        scriptName: String,
+        scriptAuthor: String,
+        jsonString: String
+    ): Script {
+        val script = Script(id = 0, Script_General_Info("", scriptAuthor, scriptName))
+        state.value.allCharactersList.forEach { character ->
+
             if (jsonString.contains(character.name.getEnglish(), ignoreCase = true)) {
                 script.charactersObjectList.add(character)
             }
         }
+
         return script
     }
 

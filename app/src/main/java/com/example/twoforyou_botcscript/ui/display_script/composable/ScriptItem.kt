@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -52,21 +51,13 @@ fun ScriptItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-//            Text(
-//                text = "${script.scriptGeneralInfo!!.name} by ${script.scriptGeneralInfo.author}",
-//                style = MaterialTheme.typography.bodyLarge,
-//                modifier = Modifier
-//                    .padding(4.dp)
-//            )
-
             Text(
-                text = "${script.charactersObjectList}",
+                text = "${script.scriptGeneralInfo!!.name} by ${script.scriptGeneralInfo.author}",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .padding(4.dp)
+                    .weight(1f)
             )
-
-            Spacer(modifier = Modifier.weight(1f))
 
             IconButton(
                 onClick = { deleteIconButtonClicked = true },
@@ -96,7 +87,7 @@ fun ScriptItem(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "${script.scriptGeneralInfo?.name}을 삭제합니까?")
+                            Text(text = "${script.scriptGeneralInfo.name}을 삭제합니까?")
 
                             Row(
 
