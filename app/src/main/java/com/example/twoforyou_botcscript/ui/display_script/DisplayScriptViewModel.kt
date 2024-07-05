@@ -1,5 +1,6 @@
 package com.example.twoforyou_botcscript.ui.display_script
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.twoforyou_botcscript.data.model.Character
@@ -55,14 +56,21 @@ class DisplayScriptViewModel @Inject constructor(
         jsonString: String
     ): Script {
         val script = Script(id = 0, Script_General_Info("", scriptAuthor, scriptName))
-        state.value.allCharactersList.forEach { character ->
 
-            if (jsonString.contains(character.name.getEnglish(), ignoreCase = true)) {
-                script.charactersObjectList.add(character)
-            }
+        var jsonCharactersStringList = jsonString.split("\"id\": \"[a-zA-Z\\s\\_\\']+\"")
+        jsonCharactersStringList.forEach {
+            it.replace("{\"id\": \"", "").replace("\"}", "").replace(" ", "").replace("\'", "")
+        }
+        Log.d("TAG", "DisplayScriptViewModel : goes in $jsonCharactersStringList")
+
+        val charactersList = state.value.allCharactersList.filter { it.name.getEnglish() in jsonCharactersStringList }
+
+        charactersList.map {
+            script.charactersObjectList.add(it)
         }
 
         return script
     }
+
 
 }

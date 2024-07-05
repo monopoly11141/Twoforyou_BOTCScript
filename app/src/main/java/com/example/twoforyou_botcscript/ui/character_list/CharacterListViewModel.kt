@@ -26,7 +26,6 @@ class CharacterListViewModel @Inject constructor(
                 it.copy(
                     allCharactersList = repository.getAllCharacters()
                         .stateIn(viewModelScope).value.toSet(),
-                    //filteredCharactersList = repository.getAllCharacters().stateIn(viewModelScope).value
                 )
             }
         }
@@ -50,14 +49,5 @@ class CharacterListViewModel @Inject constructor(
             )
         }
     }
-
-    fun updateFilteredCharactersListToAllCharacters() {
-        _state.update {
-            it.copy(
-                filteredCharactersList = it.allCharactersList
-            )
-        }
-    }
-
 
 }

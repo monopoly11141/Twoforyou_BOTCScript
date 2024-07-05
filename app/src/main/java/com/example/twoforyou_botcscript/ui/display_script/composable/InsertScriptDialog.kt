@@ -25,8 +25,8 @@ fun InsertScriptDialog(
     modifier: Modifier = Modifier,
     viewModel: DisplayScriptViewModel = hiltViewModel()
 ) {
-    var scriptTitleText by remember {mutableStateOf("")}
-    var scriptAuthorText by remember {mutableStateOf("")}
+    var scriptTitleText by remember { mutableStateOf("") }
+    var scriptAuthorText by remember { mutableStateOf("") }
     var jsonText by remember { mutableStateOf("") }
 
 
@@ -66,7 +66,11 @@ fun InsertScriptDialog(
 
             Button(
                 onClick = {
-                    val script = viewModel.generateScriptFromJsonString(scriptTitleText, scriptAuthorText, jsonText)
+                    val script = viewModel.generateScriptFromJsonString(
+                        scriptTitleText,
+                        scriptAuthorText,
+                        jsonText
+                    )
                     onInsertClicked(script)
 
                     onCancelClicked()
