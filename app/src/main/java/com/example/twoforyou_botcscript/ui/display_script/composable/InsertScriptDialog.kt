@@ -66,7 +66,7 @@ fun InsertScriptDialog(
 
             Button(
                 onClick = {
-                    val script = viewModel.generateScriptFromJsonString(
+                    val script = viewModel.generateScript(
                         scriptTitleText,
                         scriptAuthorText,
                         jsonText

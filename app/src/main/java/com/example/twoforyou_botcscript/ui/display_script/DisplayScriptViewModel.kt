@@ -50,7 +50,7 @@ class DisplayScriptViewModel @Inject constructor(
         }
     }
 
-    fun generateScriptFromJsonString(
+    fun generateScript(
         scriptName: String,
         scriptAuthor: String,
         jsonString: String
