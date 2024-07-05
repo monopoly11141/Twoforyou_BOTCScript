@@ -52,7 +52,7 @@ fun ScriptItem(
         ) {
 
             Text(
-                text = "${script.scriptGeneralInfo!!.name} by ${script.scriptGeneralInfo.author}",
+                text = "${script.scriptGeneralInfo.name} by ${script.scriptGeneralInfo.author}",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .padding(4.dp)
@@ -61,7 +61,6 @@ fun ScriptItem(
 
             IconButton(
                 onClick = { deleteIconButtonClicked = true },
-
                 ) {
                 Icon(
                     imageVector = Icons.Default.Clear,

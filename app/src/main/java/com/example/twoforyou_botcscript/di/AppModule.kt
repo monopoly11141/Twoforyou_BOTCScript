@@ -7,10 +7,10 @@ import com.example.twoforyou_botcscript.data.db.local.ScriptDb
 import com.example.twoforyou_botcscript.data.db.remote.FirebaseCharacterDatabase
 import com.example.twoforyou_botcscript.data.repository.character_list.CharacterListRepositoryImpl
 import com.example.twoforyou_botcscript.data.repository.display_script.DisplayScriptRepositoryImpl
-import com.example.twoforyou_botcscript.data.repository.script_info.ScriptInfoRepositoryImpl
+import com.example.twoforyou_botcscript.data.repository.script_detail.ScriptDetailRepositoryImpl
 import com.example.twoforyou_botcscript.domain.repository.character_list.CharacterListRepository
 import com.example.twoforyou_botcscript.domain.repository.display_script.DisplayScriptRepository
-import com.example.twoforyou_botcscript.domain.repository.script_info.ScriptInfoRepository
+import com.example.twoforyou_botcscript.domain.repository.script_detail.ScriptDetailRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,7 +32,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesScriptDisplayRepository(
+    fun providesDisplayScriptRepository(
         scriptDao : ScriptDao,
         firebaseCharacterDatabase: FirebaseCharacterDatabase
     ): DisplayScriptRepository {
@@ -41,8 +41,10 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesScriptInfoRepository(): ScriptInfoRepository {
-        return ScriptInfoRepositoryImpl()
+    fun providesScriptDetailRepository(
+        scriptDao: ScriptDao
+    ): ScriptDetailRepository {
+        return ScriptDetailRepositoryImpl(scriptDao)
     }
 
     @Provides

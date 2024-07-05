@@ -1,5 +1,7 @@
 package com.example.twoforyou_botcscript.ui.script_detail
 
+import com.example.twoforyou_botcscript.data.model.Script
+
 data class ScriptDetailUiState(
-    val scriptId : Int = 0
+    val script : Script = Script()
 )
