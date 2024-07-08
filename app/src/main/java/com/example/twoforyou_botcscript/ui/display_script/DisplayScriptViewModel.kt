@@ -57,7 +57,10 @@ class DisplayScriptViewModel @Inject constructor(
     ): Script {
         val script = Script(id = 0, Script_General_Info("", scriptAuthor, scriptName))
 
-        var jsonCharactersStringList = jsonString.split("\"id\": \"[a-zA-Z\\s\\_\\']+\"")
+        var jsonCharactersStringList = jsonString.trim().drop(2).dropLast(2).split("\"id\": \"[a-zA-Z\\s\\_\\']+\"")
+
+        Log.d("TAG", "DisplayScriptViewModel : goes in $jsonCharactersStringList")
+
         jsonCharactersStringList.forEach {
             it.replace("{\"id\": \"", "").replace("\"}", "").replace(" ", "").replace("\'", "")
         }
