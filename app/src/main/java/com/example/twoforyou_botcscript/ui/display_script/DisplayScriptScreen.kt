@@ -1,5 +1,9 @@
 package com.example.twoforyou_botcscript.ui.display_script
 
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +30,7 @@ import androidx.navigation.NavController
 import com.example.twoforyou_botcscript.navigation.Screen
 import com.example.twoforyou_botcscript.ui.display_script.composable.InsertScriptDialog
 import com.example.twoforyou_botcscript.ui.display_script.composable.ScriptItem
+import java.io.File
 
 @Composable
 fun DisplayScriptScreen(
@@ -35,6 +40,11 @@ fun DisplayScriptScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     var showInsertScriptDialog by remember { mutableStateOf(false) }
+
+    val result = remember { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
+        result.value = it
+    }
 
     Scaffold { paddingValues ->
         Column(
@@ -91,6 +101,18 @@ fun DisplayScriptScreen(
                             .padding(4.dp)
                     )
                 }
+
+                Button(onClick = {
+                    launcher.launch(arrayOf("application/json"))
+                }) {
+                    Text(text = "Select Document")
+                }
+                result.value?.let { file ->
+                    val a = readFileAsTextUsingInputStream(File(file.path).name)
+                    Log.d("TAG", a)
+                    Text(text = "Document Path: "+file.path.toString())
+                }
+
             }
 
         }
@@ -105,4 +127,9 @@ fun DisplayScriptScreen(
     }
 
 
+
 }
+
+
+fun readFileAsTextUsingInputStream(fileName: String)
+        = File(fileName).inputStream().readBytes().toString(Charsets.UTF_8)
