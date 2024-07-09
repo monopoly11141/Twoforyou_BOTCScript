@@ -1,8 +1,6 @@
 package com.example.twoforyou_botcscript.ui.display_script.composable
 
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -20,6 +18,7 @@ import com.example.twoforyou_botcscript.ui.display_script.DisplayScriptViewModel
 
 @Composable
 fun InsertScriptDialog(
+    jsonString : String,
     onInsertClicked: (Script) -> Unit,
     onCancelClicked: () -> Unit,
     modifier: Modifier = Modifier,
@@ -27,8 +26,6 @@ fun InsertScriptDialog(
 ) {
     var scriptTitleText by remember { mutableStateOf("") }
     var scriptAuthorText by remember { mutableStateOf("") }
-    var jsonText by remember { mutableStateOf("") }
-
 
     Dialog(onDismissRequest = { onCancelClicked() }) {
         Column {
@@ -52,29 +49,15 @@ fun InsertScriptDialog(
                 }
             )
 
-            TextField(
-                value = jsonText,
-                onValueChange = { updatedText ->
-                    jsonText = updatedText
-                },
-                label = {
-                    Text("json을 복붙하세요")
-                },
-                modifier = Modifier
-                    .horizontalScroll(rememberScrollState())
-            )
-
             Button(
                 onClick = {
                     val script = viewModel.generateScript(
                         scriptTitleText,
-                        scriptAuthorText,
-                        jsonText
+                        scriptAuthorText
                     )
                     onInsertClicked(script)
 
                     onCancelClicked()
-                    jsonText = ""
                 },
                 modifier = Modifier
                     .align(Alignment.End)

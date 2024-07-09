@@ -1,7 +1,6 @@
 package com.example.twoforyou_botcscript.ui.display_script
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -23,14 +22,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.twoforyou_botcscript.navigation.Screen
-import com.example.twoforyou_botcscript.ui.display_script.composable.InsertScriptDialog
 import com.example.twoforyou_botcscript.ui.display_script.composable.ScriptItem
-import java.io.File
+
 
 @Composable
 fun DisplayScriptScreen(
@@ -38,13 +37,15 @@ fun DisplayScriptScreen(
     viewModel: DisplayScriptViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val contentResolver = LocalContext.current.contentResolver
 
-    var showInsertScriptDialog by remember { mutableStateOf(false) }
-
-    val result = remember { mutableStateOf<Uri?>(null) }
+    var fileUri by remember { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
-        result.value = it
+        fileUri = it
     }
+    var jsonString by remember { mutableStateOf("") }
+
+    var addScriptButtonClicked by remember { mutableStateOf(false) }
 
     Scaffold { paddingValues ->
         Column(
@@ -74,19 +75,6 @@ fun DisplayScriptScreen(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.Bottom
             ) {
-                Button(
-                    onClick = {
-                        showInsertScriptDialog = true
-                    },
-                    modifier = Modifier
-                        .weight(0.5f)
-                ) {
-                    Text(
-                        text = "json파일 추가",
-                        modifier = Modifier
-                            .padding(4.dp)
-                    )
-                }
 
                 Button(
                     onClick = {
@@ -104,32 +92,27 @@ fun DisplayScriptScreen(
 
                 Button(onClick = {
                     launcher.launch(arrayOf("application/json"))
+                    addScriptButtonClicked = true
                 }) {
                     Text(text = "Select Document")
                 }
-                result.value?.let { file ->
-                    val a = readFileAsTextUsingInputStream(File(file.path).name)
-                    Log.d("TAG", a)
-                    Text(text = "Document Path: "+file.path.toString())
-                }
 
+                if (addScriptButtonClicked && fileUri != null) {
+                    val fileName = viewModel.getFileNameFromUri(fileUri!!, contentResolver)
+
+                    val inputStream = contentResolver.openInputStream(fileUri!!)!!
+                    jsonString = inputStream.bufferedReader().use { it.readText() }
+
+                    viewModel.insertScriptToDb(viewModel.generateScript(fileName, jsonString))
+
+                    addScriptButtonClicked = false
+                }
             }
 
         }
 
     }
 
-    if (showInsertScriptDialog) {
-        InsertScriptDialog(
-            onInsertClicked = { script -> viewModel.insertScriptToDb(script) },
-            onCancelClicked = { showInsertScriptDialog = false }
-        )
-    }
-
-
-
 }
 
 
-fun readFileAsTextUsingInputStream(fileName: String)
-        = File(fileName).inputStream().readBytes().toString(Charsets.UTF_8)

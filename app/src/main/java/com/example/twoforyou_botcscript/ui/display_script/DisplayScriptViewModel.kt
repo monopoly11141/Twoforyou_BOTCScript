@@ -1,5 +1,8 @@
 package com.example.twoforyou_botcscript.ui.display_script
 
+import android.content.ContentResolver
+import android.net.Uri
+import android.provider.OpenableColumns
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -52,12 +55,11 @@ class DisplayScriptViewModel @Inject constructor(
 
     fun generateScript(
         scriptName: String,
-        scriptAuthor: String,
         jsonString: String
     ): Script {
-        val script = Script(id = 0, Script_General_Info("", scriptAuthor, scriptName))
+        val script = Script(id = 0, Script_General_Info("", "", scriptName.replace(".json", "")))
 
-        var jsonCharactersStringList = jsonString.trim().drop(2).dropLast(2).split("\"id\": \"[a-zA-Z\\s\\_\\']+\"")
+        var jsonCharactersStringList = jsonString.trim().drop(1).dropLast(1).split("\"id\": \"[a-zA-Z\\s\\_\\']+\"")
 
         Log.d("TAG", "DisplayScriptViewModel : goes in $jsonCharactersStringList")
 
@@ -73,6 +75,28 @@ class DisplayScriptViewModel @Inject constructor(
         }
 
         return script
+    }
+
+    fun getFileNameFromUri(uri: Uri, contentResolver: ContentResolver) : String {
+            var result: String? = null
+            if (uri.scheme == "content") {
+                val cursor = contentResolver.query(uri, null, null, null, null)
+                cursor.use { it ->
+                    if (it != null && it.moveToFirst()) {
+                        val cursorColumnIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                        result = it.getString(cursorColumnIndex)
+                    }
+                }
+            }
+            if (result == null) {
+                result = uri.path
+                val cut = result!!.lastIndexOf('/')
+                if (cut != -1) {
+                    result = result!!.substring(cut + 1)
+                }
+            }
+            return result!!
+
     }
 
 
