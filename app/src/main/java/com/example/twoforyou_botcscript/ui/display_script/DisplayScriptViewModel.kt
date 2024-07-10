@@ -61,7 +61,7 @@ class DisplayScriptViewModel @Inject constructor(
     ): Script {
         val script = Script(id = 0, Script_General_Info("", "", scriptName.replace(".json", "")))
 
-        val regex = Regex("(?<=\"id\": \")[a-zA-z']+")
+        val regex = Regex("(?<=\"id\": \")[a-zA-z'-]+")
         val jsonCharactersStringList =
             regex.findAll(jsonString).map { it.value.replace("_", "") }.toList()
 
