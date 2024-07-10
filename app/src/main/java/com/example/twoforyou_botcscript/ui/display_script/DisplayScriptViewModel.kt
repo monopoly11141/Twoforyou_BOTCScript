@@ -1,9 +1,10 @@
 package com.example.twoforyou_botcscript.ui.display_script
 
 import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
-import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.twoforyou_botcscript.data.model.Character
@@ -55,49 +56,49 @@ class DisplayScriptViewModel @Inject constructor(
 
     fun generateScript(
         scriptName: String,
-        jsonString: String
+        jsonString: String,
+        context: Context
     ): Script {
         val script = Script(id = 0, Script_General_Info("", "", scriptName.replace(".json", "")))
 
-        var jsonCharactersStringList = jsonString.trim().drop(1).dropLast(1).split("\"id\": \"[a-zA-Z\\s\\_\\']+\"")
+        val regex = Regex("(?<=\"id\": \")[a-zA-z']+")
+        val jsonCharactersStringList =
+            regex.findAll(jsonString).map { it.value.replace("_", "") }.toList()
 
-        Log.d("TAG", "DisplayScriptViewModel : goes in $jsonCharactersStringList")
-
-        jsonCharactersStringList.forEach {
-            it.replace("{\"id\": \"", "").replace("\"}", "").replace(" ", "").replace("\'", "")
-        }
-        Log.d("TAG", "DisplayScriptViewModel : goes in $jsonCharactersStringList")
-
-        val charactersList = state.value.allCharactersList.filter { it.name.getEnglish() in jsonCharactersStringList }
-
-        charactersList.map {
-            script.charactersObjectList.add(it)
+        try {
+            for (jsonCharacter in jsonCharactersStringList) {
+                val character = state.value.allCharactersList.filter {
+                    it.name.getEnglish().lowercase() == jsonCharacter
+                }[0]
+                script.charactersObjectList.add(character)
+            }
+        } catch(e: NullPointerException) {
+            Toast.makeText(context, "json 파일을 확인해주세요.", Toast.LENGTH_SHORT).show()
         }
 
         return script
     }
 
-    fun getFileNameFromUri(uri: Uri, contentResolver: ContentResolver) : String {
-            var result: String? = null
-            if (uri.scheme == "content") {
-                val cursor = contentResolver.query(uri, null, null, null, null)
-                cursor.use { it ->
-                    if (it != null && it.moveToFirst()) {
-                        val cursorColumnIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                        result = it.getString(cursorColumnIndex)
-                    }
-                }
-            }
-            if (result == null) {
-                result = uri.path
-                val cut = result!!.lastIndexOf('/')
-                if (cut != -1) {
-                    result = result!!.substring(cut + 1)
-                }
-            }
-            return result!!
 
+    fun getFileNameFromUri(uri: Uri, contentResolver: ContentResolver): String {
+        var result: String? = null
+        if (uri.scheme == "content") {
+            val cursor = contentResolver.query(uri, null, null, null, null)
+            cursor.use { it ->
+                if (it != null && it.moveToFirst()) {
+                    val cursorColumnIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    result = it.getString(cursorColumnIndex)
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.path
+            val cut = result!!.lastIndexOf('/')
+            if (cut != -1) {
+                result = result!!.substring(cut + 1)
+            }
+        }
+        return result!!
     }
-
 
 }
