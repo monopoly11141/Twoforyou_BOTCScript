@@ -56,7 +56,7 @@ fun DisplayScriptScreen(
                 modifier = Modifier
                     .weight(1f)
             ) {
-                items(state.scriptList) { script ->
+                items(state.scriptList.sortedBy { it.scriptGeneralInfo.name }) { script ->
                     ScriptItem(
                         script,
                         { viewModel.deleteScriptInDb(script) },
