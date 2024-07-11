@@ -1,5 +1,6 @@
 package com.example.twoforyou_botcscript.ui.script_detail
 
+import android.Manifest
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,7 +45,17 @@ fun ScriptDetailScreen(
             }
 
             Button(
-                onClick = { viewModel.makePdfFromScript(state.script, context) },
+                onClick = {
+                    viewModel.requestPermission(
+                        arrayOf(
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        ),
+                        context
+                    )
+                    viewModel.makePdfFromScript(state.script, context)
+
+                },
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
