@@ -46,14 +46,14 @@ fun ScriptDetailScreen(
 
             Button(
                 onClick = {
-                    viewModel.requestPermission(
+                    viewModel.makePdfFromScript(
+                        state.script,
                         arrayOf(
                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
                             Manifest.permission.READ_EXTERNAL_STORAGE
                         ),
                         context
                     )
-                    viewModel.makePdfFromScript(state.script, context)
 
                 },
                 modifier = Modifier

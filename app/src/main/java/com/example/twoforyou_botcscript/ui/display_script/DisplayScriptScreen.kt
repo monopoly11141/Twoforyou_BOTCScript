@@ -103,7 +103,9 @@ fun DisplayScriptScreen(
                     val inputStream = contentResolver.openInputStream(fileUri!!)!!
                     jsonString = inputStream.bufferedReader().use { it.readText() }
 
-                    viewModel.insertScriptToDb(viewModel.generateScript(fileName, jsonString, LocalContext.current))
+                    viewModel.generateScript(fileName, jsonString, LocalContext.current)?.let {
+                        viewModel.insertScriptToDb(it)
+                    }
 
                     addScriptButtonClicked = false
                 }

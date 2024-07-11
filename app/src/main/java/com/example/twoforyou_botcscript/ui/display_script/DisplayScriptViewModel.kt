@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -55,27 +56,37 @@ class DisplayScriptViewModel @Inject constructor(
     }
 
     fun generateScript(
-        scriptName: String,
+        fileName: String,
         jsonString: String,
         context: Context
-    ): Script {
-        val script = Script(id = 0, Script_General_Info("", "", scriptName.replace(".json", "")))
+    ): Script? {
 
-        val regex = Regex("(?<=\"id\": \")[a-zA-z'-]+")
+        val jsonScriptMetaRemoved = jsonString.replace("\"id\": \"_meta\"", "")
+
+        val scriptNameRegex = Regex("(?<=\"name\": \")[a-zA-z' -]+")
+        var scriptName = scriptNameRegex.find(jsonScriptMetaRemoved)?.value ?: ""
+        if(scriptName.isBlank()) scriptName = fileName.replace(".json", "")
+
+        val scriptAuthorRegex = Regex("(?<=\"author\": \")[a-zA-z' -]+")
+        val scriptAuthor = scriptAuthorRegex.find(jsonScriptMetaRemoved)?.value ?: ""
+
+        val script = Script(id = 0, Script_General_Info("", scriptAuthor, scriptName))
+
+        val scriptCharacterRegex = Regex("(?<=\"id\": \")[a-zA-z' -]+")
         val jsonCharactersStringList =
-            regex.findAll(jsonString).map { it.value.replace("_", "") }.toList()
-
-        try {
-            for (jsonCharacter in jsonCharactersStringList) {
+            scriptCharacterRegex.findAll(jsonScriptMetaRemoved).map { it.value.replace("_", "") }.toList()
+        for (jsonCharacter in jsonCharactersStringList) {
+            try {
                 val character = state.value.allCharactersList.filter {
                     it.name.getEnglish().lowercase() == jsonCharacter
                 }[0]
                 script.charactersObjectList.add(character)
+            } catch (e: IndexOutOfBoundsException) {
+                Log.d("TAG", "캐릭터 : ${jsonCharacter}")
+                Toast.makeText(context, "json 파일을 확인해주세요.", Toast.LENGTH_SHORT).show()
+                return null
             }
-        } catch(e: NullPointerException) {
-            Toast.makeText(context, "json 파일을 확인해주세요.", Toast.LENGTH_SHORT).show()
         }
-
         return script
     }
 
