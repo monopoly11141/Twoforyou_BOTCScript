@@ -2,7 +2,6 @@ package com.example.twoforyou_botcscript.ui.script_detail
 
 import android.content.Context
 import android.graphics.Paint
-import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import android.os.Environment
 import android.widget.Toast
@@ -14,6 +13,8 @@ import com.example.twoforyou_botcscript.data.db.local.ScriptDao
 import com.example.twoforyou_botcscript.data.model.Script
 import com.example.twoforyou_botcscript.domain.repository.script_detail.ScriptDetailRepository
 import com.example.twoforyou_botcscript.util.PermissionUtil
+import com.example.twoforyou_botcscript.util.getEnglish
+import com.example.twoforyou_botcscript.util.getKorean
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -49,7 +50,6 @@ class ScriptDetailViewModel @Inject constructor(
     ) {
         val pageWidth = 595
         val pageHeight = 842
-        val startingYValue = 20f
 
         val pdfDocument = PdfDocument()
         val pdfDocumentPageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create()
@@ -57,25 +57,49 @@ class ScriptDetailViewModel @Inject constructor(
 
         val canvas = pdfDocumentPage.canvas
 
+        var currentYPosition = 20f
         /**
          * title
          */
         val titlePaint = Paint()
-        titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL))
-        titlePaint.textSize = 18F
+        val titlePaintTextSize = 16f
+        titlePaint.textSize = titlePaintTextSize
         titlePaint.setColor(Color.Black.toArgb())
         titlePaint.textAlign = Paint.Align.CENTER
         val titleText = "${script.scriptGeneralInfo.name} by ${script.scriptGeneralInfo.author}"
         canvas.drawText(
             titleText,
             pageWidth / 2f,
-            startingYValue,
+            currentYPosition,
             titlePaint
         )
-
+        currentYPosition += titlePaintTextSize
         /**
-         *
+         * character
          */
+        val characterTextPaint = Paint()
+        val characterTextSize = 12f
+        val characterNameXValue = 50f
+        characterTextPaint.textSize = characterTextSize
+        val incrementY = (pageHeight - currentYPosition) / (script.charactersObjectList.size + 1)
+        for(character in state.value.script.charactersObjectList) {
+            canvas.drawText(
+                character.name.getKorean(),
+                characterNameXValue,
+                currentYPosition,
+                characterTextPaint
+            )
+
+            canvas.drawText(
+                character.name.getEnglish(),
+                characterNameXValue,
+                currentYPosition + characterTextSize.toInt(),
+                characterTextPaint
+            )
+
+            currentYPosition += incrementY
+
+        }
 
 
         val childForPdfFile = "${
