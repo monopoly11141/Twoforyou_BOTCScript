@@ -1,14 +1,20 @@
 package com.example.twoforyou_botcscript.ui.script_detail
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Paint
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.pdf.PdfDocument
 import android.os.Environment
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil.ImageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import com.example.twoforyou_botcscript.data.db.local.ScriptDao
 import com.example.twoforyou_botcscript.data.model.Script
 import com.example.twoforyou_botcscript.domain.repository.script_detail.ScriptDetailRepository
@@ -23,6 +29,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
+
 
 @HiltViewModel
 class ScriptDetailViewModel @Inject constructor(
@@ -57,7 +64,8 @@ class ScriptDetailViewModel @Inject constructor(
 
         val canvas = pdfDocumentPage.canvas
 
-        var currentYPosition = 20f
+        var titleYPosition = 20f
+
         /**
          * title
          */
@@ -70,34 +78,100 @@ class ScriptDetailViewModel @Inject constructor(
         canvas.drawText(
             titleText,
             pageWidth / 2f,
-            currentYPosition,
+            titleYPosition,
             titlePaint
         )
-        currentYPosition += titlePaintTextSize
+        var characterYPosition = titleYPosition + titlePaintTextSize
+
         /**
-         * character
+         * character text paint
          */
         val characterTextPaint = Paint()
         val characterTextSize = 12f
-        val characterNameXValue = 50f
+        val characterNameXValue = 10f
         characterTextPaint.textSize = characterTextSize
-        val incrementY = (pageHeight - currentYPosition) / (script.charactersObjectList.size + 1)
-        for(character in state.value.script.charactersObjectList) {
+
+        /**
+         * character ability paint
+         */
+        val characterAbilityTextPaint = Paint()
+        val characterAbilityTextSize = 8f
+        val characterAbilityXValue = 150f
+        characterAbilityTextPaint.textSize = characterAbilityTextSize
+        characterTextPaint.textSize = characterTextSize
+
+        /**
+         * character image Paint
+         */
+
+
+        val incrementY = (pageHeight - titleYPosition) / (script.charactersObjectList.size + 1)
+
+        for (character in state.value.script.charactersObjectList) {
+            /**
+             * adding korean name to pdf
+             */
             canvas.drawText(
                 character.name.getKorean(),
                 characterNameXValue,
-                currentYPosition,
+                characterYPosition,
                 characterTextPaint
             )
 
+            /**
+             * adding english name to pdf
+             */
             canvas.drawText(
                 character.name.getEnglish(),
                 characterNameXValue,
-                currentYPosition + characterTextSize.toInt(),
+                characterYPosition + characterTextSize.toInt(),
                 characterTextPaint
             )
 
-            currentYPosition += incrementY
+            /**
+             * adding character ability to pdf
+             */
+            val characterAbilityTextSplitArray = character.ability.split("\\n")
+            var characterAbilityYPosition = characterYPosition
+            for (characterAbilitySplitString in characterAbilityTextSplitArray) {
+                canvas.drawText(
+                    characterAbilitySplitString,
+                    characterAbilityXValue,
+                    characterAbilityYPosition,
+                    characterAbilityTextPaint
+                )
+                characterAbilityYPosition += characterTextSize + 1
+            }
+
+            /**
+             * adding image to pdf
+             */
+            var paint: Paint = Paint()
+            lateinit var bitmap: Bitmap
+            viewModelScope.launch {
+                val loader = ImageLoader(context)
+                val request = ImageRequest.Builder(context)
+                    .data(character.imageUrl)
+                    .allowHardware(false) // Disable hardware bitmaps.
+                    .build()
+
+                val result = (loader.execute(request) as SuccessResult).drawable
+                bitmap = (result as BitmapDrawable).bitmap
+                Log.d("TAG", "drawPdf width : ${bitmap.width} height : ${bitmap.height}")
+            }.invokeOnCompletion {
+                val smallimg =
+                    Bitmap.createScaledBitmap(
+                        bitmap,
+                        bitmap.getWidth() / 2,
+                        bitmap.getHeight() / 2,
+                        true
+                    )
+                canvas.drawBitmap(smallimg, 40f, 35f, paint)
+
+            }
+
+
+            characterYPosition += incrementY
 
         }
 
@@ -132,7 +206,6 @@ class ScriptDetailViewModel @Inject constructor(
         }
         pdfDocument.close()
     }
-
 
 
 }
