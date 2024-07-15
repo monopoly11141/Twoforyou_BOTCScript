@@ -2,19 +2,16 @@ package com.example.twoforyou_botcscript.ui.script_detail
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Paint
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.pdf.PdfDocument
 import android.os.Environment
-import android.util.Log
+import android.os.StrictMode
 import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import coil.ImageLoader
-import coil.request.ImageRequest
-import coil.request.SuccessResult
 import com.example.twoforyou_botcscript.data.db.local.ScriptDao
 import com.example.twoforyou_botcscript.data.model.Script
 import com.example.twoforyou_botcscript.domain.repository.script_detail.ScriptDetailRepository
@@ -28,6 +25,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
 import javax.inject.Inject
 
 
@@ -147,34 +147,18 @@ class ScriptDetailViewModel @Inject constructor(
              * adding image to pdf
              */
             var paint: Paint = Paint()
-            lateinit var bitmap: Bitmap
-            viewModelScope.launch {
-                val loader = ImageLoader(context)
-                val request = ImageRequest.Builder(context)
-                    .data(character.imageUrl)
-                    .allowHardware(false) // Disable hardware bitmaps.
-                    .build()
+            val bitmap = getBitmapFromURL(character.imageUrl)
 
-                val result = (loader.execute(request) as SuccessResult).drawable
-                bitmap = (result as BitmapDrawable).bitmap
-                Log.d("TAG", "drawPdf width : ${bitmap.width} height : ${bitmap.height}")
-            }.invokeOnCompletion {
-                val smallimg =
-                    Bitmap.createScaledBitmap(
-                        bitmap,
-                        bitmap.getWidth() / 2,
-                        bitmap.getHeight() / 2,
-                        true
-                    )
-                canvas.drawBitmap(smallimg, 40f, 35f, paint)
-
+            bitmap?.let {
+                canvas.drawBitmap(it, 100f, 100f, paint)
             }
 
-
+            /**
+             * incrementing character Y Position
+             */
             characterYPosition += incrementY
 
         }
-
 
         val childForPdfFile = "${
             script.scriptGeneralInfo.name
@@ -208,4 +192,22 @@ class ScriptDetailViewModel @Inject constructor(
     }
 
 
+    private fun getBitmapFromURL(src: String): Bitmap? {
+
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+
+        try {
+            val url = URL(src)
+            val connection = url.openConnection() as HttpURLConnection
+            connection.doInput = true
+            connection.connect()
+            val input = connection.inputStream
+            val myBitmap = BitmapFactory.decodeStream(input)
+            return myBitmap
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return null
+        }
+    }
 }

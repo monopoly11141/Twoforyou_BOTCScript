@@ -1,6 +1,8 @@
 package com.example.twoforyou_botcscript.ui.script_detail
 
 import android.Manifest
+import android.graphics.Bitmap
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -64,4 +67,12 @@ fun ScriptDetailScreen(
         }
     }
 
+}
+
+@Composable
+fun BitmapImage(bitmap: Bitmap) {
+    Image(
+        bitmap = bitmap.asImageBitmap(),
+        contentDescription = "some useful description",
+    )
 }
