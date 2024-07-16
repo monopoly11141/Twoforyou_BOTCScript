@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.twoforyou_botcscript.data.db.local.ScriptDao
 import com.example.twoforyou_botcscript.data.model.Script
+import com.example.twoforyou_botcscript.data.model.helper.Character_Type
 import com.example.twoforyou_botcscript.domain.repository.script_detail.ScriptDetailRepository
 import com.example.twoforyou_botcscript.util.PermissionUtil
 import com.example.twoforyou_botcscript.util.getEnglish
@@ -88,7 +89,7 @@ class ScriptDetailViewModel @Inject constructor(
          */
         val characterTextPaint = Paint()
         val characterTextSize = 12f
-        val characterNameXValue = 10f
+        val characterNameXValue = 20f
         characterTextPaint.textSize = characterTextSize
 
         /**
@@ -96,18 +97,41 @@ class ScriptDetailViewModel @Inject constructor(
          */
         val characterAbilityTextPaint = Paint()
         val characterAbilityTextSize = 8f
-        val characterAbilityXValue = 150f
+        val characterAbilityXValue = 160f
         characterAbilityTextPaint.textSize = characterAbilityTextSize
         characterTextPaint.textSize = characterTextSize
 
         /**
          * character image Paint
          */
-
+        val characterImagePaint = Paint()
+        val characterImageXValue = 110f
+        val characterImageSize = 40
 
         val incrementY = (pageHeight - titleYPosition) / (script.charactersObjectList.size + 1)
 
         for (character in state.value.script.charactersObjectList) {
+
+            when(character.characterType) {
+                Character_Type.마을주민_TOWNSFOLK -> {
+                    characterTextPaint.color = Color.Blue.toArgb()
+                    characterAbilityTextPaint.color = Color.Blue.toArgb()
+                }
+                Character_Type.외부인_OUTSIDER -> {
+                    characterTextPaint.color = Color.Blue.toArgb()
+                    characterAbilityTextPaint.color = Color.Blue.toArgb()
+                }
+                Character_Type.하수인_MINION -> {
+                    characterTextPaint.color = Color.Red.toArgb()
+                    characterAbilityTextPaint.color = Color.Red.toArgb()
+
+                }
+                Character_Type.악마_DEMON -> {
+                    characterTextPaint.color = Color.Red.toArgb()
+                    characterAbilityTextPaint.color = Color.Red.toArgb()
+
+                }
+            }
             /**
              * adding korean name to pdf
              */
@@ -143,14 +167,28 @@ class ScriptDetailViewModel @Inject constructor(
                 characterAbilityYPosition += characterTextSize + 1
             }
 
+            canvas.drawLine(
+                0f,
+                characterYPosition + characterTextSize.toInt(),
+                pageWidth.toFloat(),
+                characterYPosition + characterTextSize.toInt() + 1,
+                characterTextPaint
+            )
+
             /**
              * adding image to pdf
              */
-            var paint: Paint = Paint()
             val bitmap = getBitmapFromURL(character.imageUrl)
 
             bitmap?.let {
-                canvas.drawBitmap(it, 100f, 100f, paint)
+                val bitmapSized =
+                    Bitmap.createScaledBitmap(bitmap, characterImageSize, characterImageSize, true)
+                canvas.drawBitmap(
+                    bitmapSized,
+                    characterImageXValue,
+                    characterYPosition - (characterImageSize / 2),
+                    characterImagePaint
+                )
             }
 
             /**
