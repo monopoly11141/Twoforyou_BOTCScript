@@ -74,7 +74,7 @@ class DisplayScriptViewModel @Inject constructor(
 
         val scriptCharacterRegex = Regex("(?<=\"id\": \")[a-zA-z' -]+")
         val jsonCharactersStringList =
-            scriptCharacterRegex.findAll(jsonScriptMetaRemoved).map { it.value.replace("_", "") }.toList()
+            scriptCharacterRegex.findAll(jsonScriptMetaRemoved).map { it.value.replace("_", "").replace("-", "") }.toList()
         for (jsonCharacter in jsonCharactersStringList) {
             try {
                 val character = state.value.allCharactersList.filter {

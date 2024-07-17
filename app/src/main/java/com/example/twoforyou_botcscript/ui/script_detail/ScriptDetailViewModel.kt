@@ -65,11 +65,12 @@ class ScriptDetailViewModel @Inject constructor(
 
         val canvas = pdfDocumentPage.canvas
 
-        var titleYPosition = 20f
+        var characterType: Character_Type? = null
 
         /**
          * title
          */
+        var titleYPosition = 20f
         val titlePaint = Paint()
         val titlePaintTextSize = 16f
         titlePaint.textSize = titlePaintTextSize
@@ -108,30 +109,87 @@ class ScriptDetailViewModel @Inject constructor(
         val characterImageXValue = 110f
         val characterImageSize = 40
 
+        /**
+         * characterType box Paint
+         */
+        val boxPaint = Paint()
+        boxPaint.setColor(Color.Black.toArgb())
+        boxPaint.strokeWidth = 0f
+        boxPaint.style = Paint.Style.STROKE
+
         val incrementY = (pageHeight - titleYPosition) / (script.charactersObjectList.size + 1)
+        val characterTypeXValue = 535f
 
         for (character in state.value.script.charactersObjectList) {
 
-            when(character.characterType) {
-                Character_Type.마을주민_TOWNSFOLK -> {
-                    characterTextPaint.color = Color.Blue.toArgb()
-                    characterAbilityTextPaint.color = Color.Blue.toArgb()
-                }
-                Character_Type.외부인_OUTSIDER -> {
-                    characterTextPaint.color = Color.Blue.toArgb()
-                    characterAbilityTextPaint.color = Color.Blue.toArgb()
-                }
-                Character_Type.하수인_MINION -> {
-                    characterTextPaint.color = Color.Red.toArgb()
-                    characterAbilityTextPaint.color = Color.Red.toArgb()
-
-                }
-                Character_Type.악마_DEMON -> {
-                    characterTextPaint.color = Color.Red.toArgb()
-                    characterAbilityTextPaint.color = Color.Red.toArgb()
-
-                }
+            if(character.characterType == Character_Type.마을주민_TOWNSFOLK ||
+                character.characterType == Character_Type.외부인_OUTSIDER
+                ) {
+                characterTextPaint.color = Color.Blue.toArgb()
+                characterAbilityTextPaint.color = Color.Blue.toArgb()
+                boxPaint.color = Color.Blue.toArgb()
+            }else {
+                characterTextPaint.color = Color.Red.toArgb()
+                characterAbilityTextPaint.color = Color.Red.toArgb()
+                boxPaint.color = Color.Red.toArgb()
             }
+
+            if (characterType != character.characterType) {
+                characterType = character.characterType
+                /**
+                 * draw characterType label
+                 */
+                canvas.drawText(
+                    characterType.name.getKorean(),
+                    characterTypeXValue,
+                    characterYPosition - characterTextSize + (characterTextSize / 2),
+                    characterTextPaint
+                )
+
+                /**
+                 * draw characterType Rectangle
+                 */
+                val characterTypeRectangleEndX = characterTypeXValue + characterType.name.getKorean().length * 12
+                canvas.drawRect(
+                    characterTypeXValue,
+                    characterYPosition - characterTextSize * 2,
+                    characterTypeRectangleEndX,
+                    characterYPosition - characterTextSize + (characterTextSize),
+                    boxPaint
+                )
+
+                /**
+                 * draw line to pdf
+                 */
+                canvas.drawLine(
+                    0f,
+                    characterYPosition - characterTextSize,
+                    characterTypeXValue,
+                    characterYPosition - characterTextSize + 1,
+                    characterTextPaint
+                )
+                canvas.drawLine(
+                    characterTypeRectangleEndX,
+                    characterYPosition - characterTextSize,
+                    pageWidth.toFloat(),
+                    characterYPosition - characterTextSize + 1,
+                    characterTextPaint
+                )
+
+            }else {
+                /**
+                 * draw line to pdf
+                 */
+                canvas.drawLine(
+                    0f,
+                    characterYPosition - characterTextSize,
+                    pageWidth.toFloat(),
+                    characterYPosition - characterTextSize + 1,
+                    characterTextPaint
+                )
+            }
+
+
             /**
              * adding korean name to pdf
              */
@@ -156,7 +214,8 @@ class ScriptDetailViewModel @Inject constructor(
              * adding character ability to pdf
              */
             val characterAbilityTextSplitArray = character.ability.split("\\n")
-            var characterAbilityYPosition = characterYPosition
+            var characterAbilityYPosition =
+                characterYPosition - characterTextSize + characterAbilityTextSize + 1
             for (characterAbilitySplitString in characterAbilityTextSplitArray) {
                 canvas.drawText(
                     characterAbilitySplitString,
@@ -164,16 +223,8 @@ class ScriptDetailViewModel @Inject constructor(
                     characterAbilityYPosition,
                     characterAbilityTextPaint
                 )
-                characterAbilityYPosition += characterTextSize + 1
+                characterAbilityYPosition += characterAbilityTextSize + 1
             }
-
-            canvas.drawLine(
-                0f,
-                characterYPosition + characterTextSize.toInt(),
-                pageWidth.toFloat(),
-                characterYPosition + characterTextSize.toInt() + 1,
-                characterTextPaint
-            )
 
             /**
              * adding image to pdf

@@ -8,4 +8,3 @@ enum class Character_Type {
     //여행자_TRAVELER,
     //우화_FABLED;
 }
-
