@@ -6,5 +6,5 @@ enum class Character_Type {
     하수인_MINION,
     악마_DEMON,
     //여행자_TRAVELER,
-    //우화_FABLED;
+    우화_FABLED;
 }

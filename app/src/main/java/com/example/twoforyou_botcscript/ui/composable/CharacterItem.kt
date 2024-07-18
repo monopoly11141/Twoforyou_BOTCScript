@@ -3,7 +3,6 @@ package com.example.twoforyou_botcscript.ui.composable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,6 +15,7 @@ import coil.compose.AsyncImage
 import com.example.twoforyou_botcscript.data.model.Character
 import com.example.twoforyou_botcscript.data.model.helper.Character_Type
 import com.example.twoforyou_botcscript.ui.theme.Demon_Color
+import com.example.twoforyou_botcscript.ui.theme.Fabled_Color
 import com.example.twoforyou_botcscript.ui.theme.Minion_Color
 import com.example.twoforyou_botcscript.ui.theme.Outsider_Color
 import com.example.twoforyou_botcscript.ui.theme.Townsfolk_Color
@@ -54,6 +54,7 @@ fun CharacterItem(
                     Character_Type.외부인_OUTSIDER -> Outsider_Color
                     Character_Type.하수인_MINION -> Minion_Color
                     Character_Type.악마_DEMON -> Demon_Color
+                    Character_Type.우화_FABLED -> Fabled_Color
                 }
             )
 

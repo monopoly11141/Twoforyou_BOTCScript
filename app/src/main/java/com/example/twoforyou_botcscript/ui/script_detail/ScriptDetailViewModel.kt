@@ -117,18 +117,47 @@ class ScriptDetailViewModel @Inject constructor(
         boxPaint.strokeWidth = 0f
         boxPaint.style = Paint.Style.STROKE
 
+        /**
+         * fabled Character
+         */
+        var fabledCharacterXValue = 10f
+        val fabledCharacterImageSize = 40
+
         val incrementY = (pageHeight - titleYPosition) / (script.charactersObjectList.size + 1)
         val characterTypeXValue = 535f
 
         for (character in state.value.script.charactersObjectList) {
 
-            if(character.characterType == Character_Type.마을주민_TOWNSFOLK ||
+            if (character.characterType == Character_Type.우화_FABLED) {
+                val bitmap = getBitmapFromURL(character.imageUrl)
+
+                bitmap?.let {
+                    val bitmapSized =
+                        Bitmap.createScaledBitmap(
+                            bitmap,
+                            fabledCharacterImageSize,
+                            fabledCharacterImageSize,
+                            true
+                        )
+                    canvas.drawBitmap(
+                        bitmapSized,
+                        fabledCharacterXValue,
+                        -10f,
+                        characterImagePaint
+                    )
+
+                    fabledCharacterXValue += fabledCharacterImageSize
+                }
+                continue
+            }
+
+            if (character.characterType == Character_Type.마을주민_TOWNSFOLK ||
                 character.characterType == Character_Type.외부인_OUTSIDER
-                ) {
+            ) {
                 characterTextPaint.color = Color.Blue.toArgb()
                 characterAbilityTextPaint.color = Color.Blue.toArgb()
                 boxPaint.color = Color.Blue.toArgb()
-            }else {
+            } else {
                 characterTextPaint.color = Color.Red.toArgb()
                 characterAbilityTextPaint.color = Color.Red.toArgb()
                 boxPaint.color = Color.Red.toArgb()
@@ -149,7 +178,8 @@ class ScriptDetailViewModel @Inject constructor(
                 /**
                  * draw characterType Rectangle
                  */
-                val characterTypeRectangleEndX = characterTypeXValue + characterType.name.getKorean().length * 12
+                val characterTypeRectangleEndX =
+                    characterTypeXValue + characterType.name.getKorean().length * 12
                 canvas.drawRect(
                     characterTypeXValue,
                     characterYPosition - characterTextSize * 2,
@@ -176,7 +206,7 @@ class ScriptDetailViewModel @Inject constructor(
                     characterTextPaint
                 )
 
-            }else {
+            } else {
                 /**
                  * draw line to pdf
                  */
@@ -248,6 +278,20 @@ class ScriptDetailViewModel @Inject constructor(
             characterYPosition += incrementY
 
         }
+
+        /**
+         * 첫 밤 제외
+         */
+        val exceptFirstNightPaint = Paint()
+        val exceptFirstNighTextSize = 10f
+        val exceptFirstNightYValue = 830f
+        exceptFirstNightPaint.textSize = exceptFirstNighTextSize
+        canvas.drawText(
+            "* = 첫 밤 제외",
+            characterNameXValue,
+            exceptFirstNightYValue,
+            exceptFirstNightPaint
+        )
 
         val childForPdfFile = "${
             script.scriptGeneralInfo.name
