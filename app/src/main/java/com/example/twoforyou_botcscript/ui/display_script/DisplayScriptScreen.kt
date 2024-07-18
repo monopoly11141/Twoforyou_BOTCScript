@@ -60,6 +60,7 @@ fun DisplayScriptScreen(
                     ScriptItem(
                         script,
                         { viewModel.deleteScriptInDb(script) },
+                        { viewModel.updateScriptInDb(script) },
                         { navController.navigate(Screen.ScriptDetailScreen(script.id)) }
                     )
 

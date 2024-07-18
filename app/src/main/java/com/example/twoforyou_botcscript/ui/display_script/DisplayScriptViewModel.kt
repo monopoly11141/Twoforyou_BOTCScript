@@ -55,6 +55,12 @@ class DisplayScriptViewModel @Inject constructor(
         }
     }
 
+    fun updateScriptInDb(script: Script) {
+        viewModelScope.launch {
+            repository.updateScript(script)
+        }
+    }
+
     fun generateScript(
         fileName: String,
         jsonString: String,

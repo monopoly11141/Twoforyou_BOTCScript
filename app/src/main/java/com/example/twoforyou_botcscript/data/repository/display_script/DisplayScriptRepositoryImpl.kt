@@ -25,6 +25,10 @@ class DisplayScriptRepositoryImpl @Inject constructor(
         scriptDao.insertScript(script)
     }
 
+    override suspend fun updateScript(script: Script) {
+        scriptDao.updateScript(script)
+    }
+
     override suspend fun deleteScript(script: Script) {
         scriptDao.deleteScript(script)
     }
