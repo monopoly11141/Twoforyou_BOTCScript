@@ -4,8 +4,6 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
-import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.twoforyou_botcscript.data.model.Character
@@ -59,33 +57,45 @@ class DisplayScriptViewModel @Inject constructor(
         fileName: String,
         jsonString: String,
         context: Context
-    ): Script? {
+    ): Script {
 
         val jsonScriptMetaRemoved = jsonString.replace("\"id\": \"_meta\"", "")
 
-        val scriptNameRegex = Regex("(?<=\"name\": \")[a-zA-z' -]+")
-        var scriptName = scriptNameRegex.find(jsonScriptMetaRemoved)?.value ?: ""
-        if(scriptName.isBlank()) scriptName = fileName.replace(".json", "")
+        val scriptNameRegex = Regex("(?<=\"name\":)\\s*\"[a-zA-z' \\d.-]*")
+        var scriptName = scriptNameRegex.find(jsonScriptMetaRemoved)?.value?.trim()?.replace("\"", "") ?: ""
+        if (scriptName.isBlank()) scriptName = fileName.replace(".json", "")
 
-        val scriptAuthorRegex = Regex("(?<=\"author\": \")[a-zA-z' -]+")
-        val scriptAuthor = scriptAuthorRegex.find(jsonScriptMetaRemoved)?.value ?: ""
+        val scriptAuthorRegex = Regex("(?<=\"author\":)\\s*\"[a-zA-z' \\d.-]*")
+        val scriptAuthor = scriptAuthorRegex.find(jsonScriptMetaRemoved)?.value?.trim()?.replace("\"", "") ?: ""
 
         val script = Script(id = 0, Script_General_Info("", scriptAuthor, scriptName))
 
-        val scriptCharacterRegex = Regex("(?<=\"id\": \")[a-zA-z' -]+")
-        val jsonCharactersStringList =
-            scriptCharacterRegex.findAll(jsonScriptMetaRemoved).map { it.value.replace("_", "").replace("-", "") }.toList()
+        var scriptCharacterRegex = Regex("(?<=\"id\": \")[a-zA-z' -]+")
+        var jsonCharactersStringList =
+            scriptCharacterRegex.findAll(jsonScriptMetaRemoved).map { it.value.replace("_", "").replace("-", "") }
+                .toList()
+
+        if (jsonCharactersStringList.isEmpty()) {
+            scriptCharacterRegex = Regex("\"[a-zA-Z_\\s\\d' ]*\"")
+            jsonCharactersStringList =
+                scriptCharacterRegex.findAll(jsonScriptMetaRemoved).map {
+                    it.value.trim().replace("_", "").replace("-", "").replace("\"", "")
+                }.toList()
+
+        }
+
         for (jsonCharacter in jsonCharactersStringList) {
-            try {
-                val character = state.value.allCharactersList.filter {
+            if (
+                state.value.allCharactersList.filter {
                     it.name.getEnglish().lowercase() == jsonCharacter
-                }[0]
-                script.charactersObjectList.add(character)
-            } catch (e: IndexOutOfBoundsException) {
-                Log.d("TAG", "캐릭터 : ${jsonCharacter}")
-                Toast.makeText(context, "json 파일을 확인해주세요.", Toast.LENGTH_SHORT).show()
-                return null
+                }.isEmpty()
+            ) {
+                continue
             }
+            val character = state.value.allCharactersList.filter {
+                it.name.getEnglish().lowercase() == jsonCharacter
+            }[0]
+            script.charactersObjectList.add(character)
         }
         return script
     }
