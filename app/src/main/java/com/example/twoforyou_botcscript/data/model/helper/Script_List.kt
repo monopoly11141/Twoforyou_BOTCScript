@@ -5,5 +5,5 @@ enum class Script_List{
     BadMoonRising,
     SectsAndViolets,
     Experimental,
-    FABLED
+    Fabled
 }

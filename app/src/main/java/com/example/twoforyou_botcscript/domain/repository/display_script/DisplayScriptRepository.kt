@@ -9,6 +9,7 @@ interface DisplayScriptRepository {
 
     fun getAllScript() : Flow<List<Script>>
     suspend fun insertScript(script: Script)
+    suspend fun updateScript(script: Script)
     suspend fun deleteScript(script: Script)
     suspend fun deleteAllScript()
 }

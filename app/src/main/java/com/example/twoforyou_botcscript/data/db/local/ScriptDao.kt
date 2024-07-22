@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.example.twoforyou_botcscript.data.model.Script
 import kotlinx.coroutines.flow.Flow
 
@@ -15,6 +16,9 @@ interface ScriptDao {
 
     @Insert()
     suspend fun insertScript(script: Script)
+
+    @Update
+    suspend fun updateScript(script: Script)
 
     @Delete()
     suspend fun deleteScript(script: Script)
