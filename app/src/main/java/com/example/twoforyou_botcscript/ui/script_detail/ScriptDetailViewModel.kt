@@ -55,7 +55,8 @@ class ScriptDetailViewModel @Inject constructor(
         script: Script,
         permissionList: Array<String>,
         context: Context
-    ) {
+    )  {
+
         val pageWidth = 595
         val pageHeight = 842
 
@@ -322,6 +323,7 @@ class ScriptDetailViewModel @Inject constructor(
                 .show()
         }
         pdfDocument.close()
+
     }
 
 
