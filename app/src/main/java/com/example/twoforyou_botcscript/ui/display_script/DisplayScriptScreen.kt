@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -50,30 +51,40 @@ fun DisplayScriptScreen(
 
     var addScriptButtonClicked by remember { mutableStateOf(false) }
 
-    var searchText by remember {mutableStateOf("")}
+    var searchText by remember { mutableStateOf("") }
 
     Scaffold { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
         ) {
+
             TextField(
                 value = searchText,
                 onValueChange = {
                     searchText = it
                 },
+                trailingIcon = {
+                    Icon(
+                        Icons.Filled.Search,
+                        "search"
+                    )
+                },
+                label = {
+                    Text("시나리오 이름이나 작가를 검색해보세요.")
+                },
                 modifier = Modifier
                     .fillMaxWidth(),
-                trailingIcon = {
-                    Icons.Filled.Search
-                }
             )
 
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
             ) {
-                items(state.scriptList.sortedBy { it.scriptGeneralInfo.name }) { script ->
+                items(state.scriptList.filter {
+                    it.scriptGeneralInfo.name.contains(searchText, true) or
+                            it.scriptGeneralInfo.author.contains(searchText,true)
+                }.sortedBy { it.scriptGeneralInfo.name }) { script ->
                     ScriptItem(
                         script,
                         { viewModel.deleteScriptInDb(script) },
