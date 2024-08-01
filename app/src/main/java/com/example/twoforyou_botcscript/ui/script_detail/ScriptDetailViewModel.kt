@@ -1,15 +1,21 @@
 package com.example.twoforyou_botcscript.ui.script_detail
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
+import android.os.Build
 import android.os.Environment
 import android.os.StrictMode
+import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.twoforyou_botcscript.data.db.local.ScriptDao
@@ -56,6 +62,7 @@ class ScriptDetailViewModel @Inject constructor(
         permissionList: Array<String>,
         context: Context
     )  {
+        PermissionUtil().requestPermission(permissionList, context)
 
         val pageWidth = 595
         val pageHeight = 842
@@ -302,15 +309,12 @@ class ScriptDetailViewModel @Inject constructor(
                 .replace("\n", "")
         }.pdf"
 
-
         val pdfFile =
             File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath,
                 childForPdfFile
             )
         pdfDocument.finishPage(pdfDocumentPage)
-
-        PermissionUtil().requestPermission(permissionList, context)
 
         try {
             pdfDocument.writeTo(FileOutputStream(pdfFile))
@@ -319,6 +323,7 @@ class ScriptDetailViewModel @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
 
+            Log.d("TAG", "${e.message}")
             Toast.makeText(context, "pdf파일 만들기 실패", Toast.LENGTH_SHORT)
                 .show()
         }

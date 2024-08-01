@@ -71,7 +71,7 @@ fun DisplayScriptScreen(
                     )
                 },
                 label = {
-                    Text("시나리오 이름이나 작가를 검색해보세요.")
+                    Text("시나리오 제목이나 작가를 검색해보세요.")
                 },
                 modifier = Modifier
                     .fillMaxWidth(),
