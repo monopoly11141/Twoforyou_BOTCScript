@@ -44,6 +44,7 @@ fun ScriptDetailScreen(
         mutableListOf<Character>(),
         mutableListOf<Character>(),
         mutableListOf<Character>(),
+        mutableListOf<Character>(),
     )
 
     state.script.charactersObjectList.forEach { character ->
