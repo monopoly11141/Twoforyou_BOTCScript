@@ -91,12 +91,6 @@ fun DisplayScriptScreen(
                         { viewModel.updateScriptInDb(script) },
                         { navController.navigate(Screen.ScriptDetailScreen(script.id)) }
                     )
-
-//                    Divider(
-//                        color = Color.Black,
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                    )
                 }
             }
 
