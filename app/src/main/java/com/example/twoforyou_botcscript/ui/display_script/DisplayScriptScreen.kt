@@ -92,11 +92,11 @@ fun DisplayScriptScreen(
                         { navController.navigate(Screen.ScriptDetailScreen(script.id)) }
                     )
 
-                    Divider(
-                        color = Color.Black,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
+//                    Divider(
+//                        color = Color.Black,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                    )
                 }
             }
 
