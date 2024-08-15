@@ -83,7 +83,7 @@ fun DisplayScriptScreen(
             ) {
                 items(state.scriptList.filter {
                     it.scriptGeneralInfo.name.contains(searchText, true) or
-                            it.scriptGeneralInfo.author.contains(searchText,true)
+                            it.scriptGeneralInfo.author.contains(searchText, true)
                 }.sortedBy { it.scriptGeneralInfo.name }) { script ->
                     ScriptItem(
                         script,
@@ -104,13 +104,13 @@ fun DisplayScriptScreen(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.Bottom
             ) {
-
                 Button(
                     onClick = {
                         navController.navigate(Screen.CharacterListScreen)
                     },
                     modifier = Modifier
                         .weight(0.5f)
+                        .padding(start = 4.dp, end = 2.dp)
                 ) {
                     Text(
                         text = "전체 캐릭터 보기",
@@ -119,11 +119,16 @@ fun DisplayScriptScreen(
                     )
                 }
 
-                Button(onClick = {
-                    launcher.launch(arrayOf("application/json"))
-                    addScriptButtonClicked = true
-                }) {
-                    Text(text = "Select Document")
+                Button(
+                    onClick = {
+                        launcher.launch(arrayOf("application/json"))
+                        addScriptButtonClicked = true
+                    },
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(start = 2.dp, end = 4.dp)
+                ) {
+                    Text(text = "파일 선택하기 (.json)")
                 }
 
                 if (addScriptButtonClicked && fileUri != null) {

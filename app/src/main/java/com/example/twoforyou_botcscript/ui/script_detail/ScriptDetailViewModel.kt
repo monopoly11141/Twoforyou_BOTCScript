@@ -82,7 +82,7 @@ class ScriptDetailViewModel @Inject constructor(
         val titlePaint = Paint()
         val titlePaintTextSize = 16f
         titlePaint.textSize = titlePaintTextSize
-        titlePaint.setColor(Color.Black.toArgb())
+        titlePaint.color = Color.Black.toArgb()
         titlePaint.textAlign = Paint.Align.CENTER
         val titleText = "${script.scriptGeneralInfo.name} by ${script.scriptGeneralInfo.author}"
         canvas.drawText(
@@ -105,7 +105,7 @@ class ScriptDetailViewModel @Inject constructor(
          * character ability paint
          */
         val characterAbilityTextPaint = Paint()
-        val characterAbilityTextSize = 8f
+        val characterAbilityTextSize = 9f
         val characterAbilityXValue = 160f
         characterAbilityTextPaint.textSize = characterAbilityTextSize
         characterTextPaint.textSize = characterTextSize
@@ -121,7 +121,7 @@ class ScriptDetailViewModel @Inject constructor(
          * characterType box Paint
          */
         val boxPaint = Paint()
-        boxPaint.setColor(Color.Black.toArgb())
+        boxPaint.color = Color.Black.toArgb()
         boxPaint.strokeWidth = 0f
         boxPaint.style = Paint.Style.STROKE
 
@@ -203,14 +203,15 @@ class ScriptDetailViewModel @Inject constructor(
                     0f,
                     characterYPosition - characterTextSize,
                     characterTypeXValue,
-                    characterYPosition - characterTextSize + 1,
+                    characterYPosition - characterTextSize,
                     characterTextPaint
                 )
+
                 canvas.drawLine(
                     characterTypeRectangleEndX,
                     characterYPosition - characterTextSize,
                     pageWidth.toFloat(),
-                    characterYPosition - characterTextSize + 1,
+                    characterYPosition - characterTextSize,
                     characterTextPaint
                 )
 
@@ -226,7 +227,6 @@ class ScriptDetailViewModel @Inject constructor(
                     characterTextPaint
                 )
             }
-
 
             /**
              * adding korean name to pdf
