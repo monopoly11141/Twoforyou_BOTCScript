@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.twoforyou_botcscript.data.model.Character
 import com.example.twoforyou_botcscript.data.model.helper.Character_Type
@@ -42,8 +43,8 @@ fun CharacterItem(
         modifier = modifier
             .fillMaxWidth()
             .border(
-                1.dp,
-                color = Color.Gray,
+                0.5.dp,
+                color = Color.LightGray,
             )
             .padding(2.dp)
     ) {
@@ -60,17 +61,19 @@ fun CharacterItem(
                     model = character.imageUrl,
                     contentDescription = "캐릭터 이미지",
                     modifier = Modifier
-                        .size(60.dp)
+                        .size(50.dp)
                 )
 
                 Text(
                     text = character.name.getKorean(),
-                    color = textColor
+                    color = textColor,
+                    fontSize = 14.sp
                 )
 
                 Text(
                     text = character.name.getEnglish(),
-                    color = textColor
+                    color = textColor,
+                    fontSize = 14.sp
                 )
             }
 
@@ -79,7 +82,8 @@ fun CharacterItem(
                 text = character.ability.replace("\\n", "\n"),
                 modifier = Modifier
                     .fillMaxWidth(),
-                color = textColor
+                color = textColor,
+                fontSize = 12.sp
             )
 
         }
